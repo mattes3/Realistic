@@ -35,7 +35,7 @@
 	
 			the_title( sprintf( '<h2 class="entry-title post-title mdl-card__title-text"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 			
-			<?php realistic_archives_meta(); ?>
+			<?php realistic_archives_meta( $post->ID ); ?>
 			<div class="entry-content post-excerpt">
 				<?php /* translators: %s: Name of current post */ ?>
 				<span class="mdl-typography--font-light mdl-typography--subhead">

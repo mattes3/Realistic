@@ -19,22 +19,18 @@ class realistic_popular_posts_widget extends WP_Widget {
 
  	public function form( $instance ) {
 		$defaults = array(
-			'category' => 1,
+			'comments' => 1,
 			'date' => 1,
 			'days' => 30,
 			'show_thumb' => 1,
-			'show_excerpt' => 0,
-			'excerpt_length' => 10,
 		);
 		$instance = wp_parse_args((array) $instance, $defaults);
 		$title = isset( $instance[ 'title' ] ) ? $instance[ 'title' ] : __( 'Popular Posts','realistic' );
 		$qty = isset( $instance[ 'qty' ] ) ? intval( $instance[ 'qty' ] ) : 5;
-		$category = isset( $instance[ 'category' ] ) ? intval( $instance[ 'category' ] ) : 1;
+		$comments = isset( $instance[ 'comments' ] ) ? intval( $instance[ 'comments' ] ) : 1;
 		$date = isset( $instance[ 'date' ] ) ? intval( $instance[ 'date' ] ) : 1;
 		$days = isset( $instance[ 'days' ] ) ? intval( $instance[ 'days' ] ) : 0;
 		$show_thumb = isset( $instance[ 'show_thumb' ] ) ? intval( $instance[ 'show_thumb' ] ) : 1;
-		$show_excerpt = isset( $instance[ 'show_excerpt' ] ) ? esc_attr( $instance[ 'show_excerpt' ] ) : 1;
-		$excerpt_length = isset( $instance[ 'excerpt_length' ] ) ? intval( $instance[ 'excerpt_length' ] ) : 10;
 		?>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:','realistic' ); ?></label> 
@@ -67,24 +63,11 @@ class realistic_popular_posts_widget extends WP_Widget {
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id("category"); ?>">
-				<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("category"); ?>" name="<?php echo $this->get_field_name("category"); ?>" value="1" <?php checked( 1, $instance['category'], true ); ?> />
-				<?php _e( 'Show Category', 'realistic'); ?>
+			<label for="<?php echo $this->get_field_id("comments"); ?>">
+				<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("comments"); ?>" name="<?php echo $this->get_field_name("comments"); ?>" value="1" <?php checked( 1, $instance['comments'], true ); ?> />
+				<?php _e( 'Show comments number', 'realistic'); ?>
 			</label>
 		</p>
-
-		<p>
-			<label for="<?php echo $this->get_field_id("show_excerpt"); ?>">
-				<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("show_excerpt"); ?>" name="<?php echo $this->get_field_name("show_excerpt"); ?>" value="1" <?php checked( 1, $instance['show_excerpt'], true ); ?> />
-				<?php _e( 'Show excerpt', 'realistic'); ?>
-			</label>
-		</p>
-		
-		<p>
-	       <label for="<?php echo $this->get_field_id( 'excerpt_length' ); ?>"><?php _e( 'Excerpt Length:', 'realistic' ); ?>
-	       <input id="<?php echo $this->get_field_id( 'excerpt_length' ); ?>" name="<?php echo $this->get_field_name( 'excerpt_length' ); ?>" type="number" min="1" step="1" value="<?php echo $excerpt_length; ?>" />
-	       </label>
-       </p>
 		<?php 
 	}
 
@@ -92,41 +75,30 @@ class realistic_popular_posts_widget extends WP_Widget {
 		$instance = array();
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['qty'] = intval( $new_instance['qty'] );
-		$instance['category'] = intval( $new_instance['category'] );
+		$instance['comments'] = intval( $new_instance['comments'] );
 		$instance['date'] = intval( $new_instance['date'] );
 		$instance['days'] = intval( $new_instance['days'] );
 		$instance['show_thumb'] = intval( $new_instance['show_thumb'] );
-		$instance['show_excerpt'] = intval( $new_instance['show_excerpt'] );
-		$instance['excerpt_length'] = intval( $new_instance['excerpt_length'] );
 		return $instance;
 	}
 
 	public function widget( $args, $instance ) {
 		extract( $args );
 		$title = apply_filters( 'widget_title', $instance['title'] );
-		$category = $instance['category'];
+		$comments = $instance['comments'];
 		$date = $instance['date'];
 		$days = $instance['days'];
 		$qty = (int) $instance['qty'];
 		$show_thumb = (int) $instance['show_thumb'];
-		$show_excerpt = $instance['show_excerpt'];
-		$excerpt_length = $instance['excerpt_length'];
 
 		echo $before_widget;
 		if ( ! empty( $title ) ) echo $before_title . $title . $after_title;
-		echo self::get_popular_posts( $qty, $category, $date, $days, $show_thumb, $show_excerpt, $excerpt_length );
+		echo self::get_popular_posts( $qty, $comments, $date, $days, $show_thumb );
 		echo $after_widget;
 	}
 
-	public function get_popular_posts( $qty, $category, $date, $days, $show_thumb, $show_excerpt, $excerpt_length ) {
+	public function get_popular_posts( $qty, $comments, $date, $days, $show_thumb ) {
 
-		// Custom CSS Output
-		if ( $show_thumb == 1 ) {
-			$css = 'padding-left:80px;';
-		} else {
-			$css = 'padding-left:10px;';			
-		}
-		
 		global $post;
  	        $popular_days = array();
 		if ( $days ) {
@@ -150,7 +122,7 @@ class realistic_popular_posts_widget extends WP_Widget {
 		foreach($popular as $post) :
 			setup_postdata($post);
 		?>
-			<?php echo '<li class="post-box horizontal-container" style="'. $css .'">'; ?>
+			<?php echo '<li class="post-box horizontal-container">'; ?>
 				<?php if ( $show_thumb == 1 ) : ?>
 				<div class="widget-post-img">
 					<a rel="nofollow" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
@@ -162,22 +134,15 @@ class realistic_popular_posts_widget extends WP_Widget {
 				<?php endif; ?>
 					<div class="widget-post-data">
 						<h4><a rel="nofollow" href="<?php the_permalink()?>" title="<?php the_title(); ?>"><?php the_title(); ?></a></h4>
-						<?php if ( $date == 1 || $category == 1 ) : ?>
+						<?php if ( $date == 1 || $comments == 1 ) : ?>
 							<div class="widget-post-info">
 								<?php if ( $date == 1 ) :
-									realistic_posted();
+									echo '<span class="posted">'. realistic_posted() .'</span>';
 								endif; ?>
-								<?php if ( $category == 1 ) :
-									_e(' in ', 'realistic');
-									$thecategory = get_the_category();
-									echo '<span class="category"><a href="' . get_category_link( $thecategory[0]->term_id ) . '" title="' . sprintf( __( "View all posts in %s", "realistic" ), $thecategory[0]->name ) . '" ' . '>' . $thecategory[0]->name.'</a></span>';	
+								<?php if ( $comments == 1 ) :
+									echo '<span class="comments"><i class="icon icon-comment"></i>'. realistic_entry_comments() .' comments</span>';
 								endif; ?>
 							</div> <!--end .post-info-->
-						<?php endif; ?>
-						<?php if ( $show_excerpt == 1 ) : ?>
-							<div class="widget-post-excerpt">
-								<?php echo realistic_excerpt( $excerpt_length ); ?>
-							</div>
 						<?php endif; ?>
 					</div>
 			<?php endforeach; 

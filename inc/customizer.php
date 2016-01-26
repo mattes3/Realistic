@@ -20,28 +20,9 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		'title' => __( 'General Settings', 'realistic' ),
 		'priority' => 10,
 	) );
-
-		//favicon upload	
-		$wp_customize->add_setting( 
-			'favicon_image' , array(
-				'default'     => get_template_directory_uri() .'/images/favicon.gif',
-				'sanitize_callback' => 'esc_url_raw',
-				));
-		 
-		$wp_customize->add_control(
-			new WP_Customize_Image_Control(
-				$wp_customize,
-				'favicon_image',
-				array(
-					'label' =>  __( 'Custom Favicon', 'realistic' ),
-					'section' => 'general_settings',
-					'settings' => 'favicon_image',
-				)
-			)
-		);			
 		
 		//Add "Switcher" support to the theme customizer
-		class Customizer_Switcher_Control extends WP_Customize_Control {
+		class Realistic_Customizer_Switcher_Control extends WP_Customize_Control {
 			public $type = 'switcher';
 		 
 			public function render_content() {
@@ -54,20 +35,6 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 			}
 		}		
 
-		//Add textarea support to the theme customizer
-		class Customizer_Textarea_Control extends WP_Customize_Control {
-			public $type = 'textarea';
-		 
-			public function render_content() {
-				?>
-					<label>
-						<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
-						<textarea rows="5" style="width:100%;" <?php $this->link(); ?>><?php echo esc_textarea( $this->value() ); ?></textarea>
-					</label>
-				<?php
-			}
-		}
-
 		// Copyright text
 		$wp_customize->add_setting( 
 			'footer_left', array(
@@ -77,16 +44,15 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Textarea_Control(
-				$wp_customize,			
-				'footer_left',
-				array(
-					'label' => __( 'Copyright Text', 'realistic' ),
-					'section' => 'general_settings',
-					'settings' => 'footer_left',
-				)
+			'footer_left',
+			array(
+				'label' => __( 'Copyright Text', 'realistic' ),
+				'section' => 'general_settings',
+				'settings' => 'footer_left',
+				'type' => 'textarea',
 			)
-		);		
+			
+		);
 
 		
 	// Site Title & Tagline
@@ -118,7 +84,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 	) );		
 
 		// Add Radio-Image control support to the theme customizer
-		class Customizer_Radio_Image_Control extends WP_Customize_Control {
+		class Realistic_Customizer_Radio_Image_Control extends WP_Customize_Control {
 			public $type = 'radio-image';
 			
 			public function enqueue() {
@@ -177,7 +143,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Switcher_Control(
+			new Realistic_Customizer_Switcher_Control(
 				$wp_customize,			
 				'archives_post_meta', array(
 					'label' =>  __( 'Archives Meta', 'realistic' ),
@@ -187,7 +153,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 
 		//Add input[type=number] support to the theme customizer
-		class Customizer_Number_Control extends WP_Customize_Control {
+		class Realistic_Customizer_Number_Control extends WP_Customize_Control {
 			public $type = 'number';
 			
 			public function render_content() {
@@ -209,7 +175,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 				
 		$wp_customize->add_control(
-			new Customizer_Number_Control(
+			new Realistic_Customizer_Number_Control(
 				$wp_customize,
 				'excerpt_length', array(
 					'label'    => __( 'Excerpt Length', 'realistic' ),
@@ -236,7 +202,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Switcher_Control(
+			new Realistic_Customizer_Switcher_Control(
 				$wp_customize,	
 				'post_meta', array(
 					'label' =>  __( 'Post Meta', 'realistic' ),
@@ -254,7 +220,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Switcher_Control(
+			new Realistic_Customizer_Switcher_Control(
 				$wp_customize,	
 				'related_posts', array(
 					'label' =>  __( 'Related Posts', 'realistic' ),
@@ -308,7 +274,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Switcher_Control(
+			new Realistic_Customizer_Switcher_Control(
 				$wp_customize,			
 				'next_prev_post', array(
 					'label' =>  __( 'Next/Prev Article', 'realistic' ),
@@ -326,7 +292,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Switcher_Control(
+			new Realistic_Customizer_Switcher_Control(
 				$wp_customize,	
 				'author_box', array(
 					'label' =>  __( 'Post Author Box', 'realistic' ),
@@ -353,7 +319,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Radio_Image_Control(
+			new Realistic_Customizer_Radio_Image_Control(
 				$wp_customize,	
 				'sidebar_settings', array(
 					'label' => __( 'Sidebar Settings', 'realistic' ),
@@ -370,24 +336,24 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		$wp_customize->add_setting(
 			'theme_color',
 			array(
-				'default' => 'default',
+				'default' => 'indigo-pink',
 				'sanitize_callback' => 'realistic_sanitize_color_scheme',
 			)
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Radio_Image_Control(
+			new Realistic_Customizer_Radio_Image_Control(
 				$wp_customize,	
 				'theme_color', array(
 					'label' => __( 'Color Scheme', 'realistic' ),
 					'section' => 'design_layout',
 					'choices' => array(
-						'default' => get_template_directory_uri() .'/images/customizer/default.png',
-						'style1' => get_template_directory_uri() .'/images/customizer/style1.png',
-						'style2' => get_template_directory_uri() .'/images/customizer/style2.png',
-						'style3' => get_template_directory_uri() .'/images/customizer/style3.png',
-						'style4' => get_template_directory_uri() .'/images/customizer/style4.png',
-						'style5' => get_template_directory_uri() .'/images/customizer/style5.png',
+						'indigo-pink' => get_template_directory_uri() .'/images/customizer/indigo-pink.png',
+						'blue-indigo' => get_template_directory_uri() .'/images/customizer/blue-indigo.png',
+						'bluegrey-teal' => get_template_directory_uri() .'/images/customizer/bluegrey-teal.png',
+						'red-deeporange' => get_template_directory_uri() .'/images/customizer/red-deeporange.png',
+						'purple-blue' => get_template_directory_uri() .'/images/customizer/purple-blue.png',
+						'green-lightgreen' => get_template_directory_uri() .'/images/customizer/green-lightgreen.png',
 					),
 				)
 			)
@@ -446,7 +412,7 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Radio_Image_Control(
+			new Realistic_Customizer_Radio_Image_Control(
 				$wp_customize,	
 				'background_pattern', array(
 					'label' => __( 'Background pattern', 'realistic' ),
@@ -587,22 +553,20 @@ function realistic_options_theme_customizer_register( $wp_customize ) {
 		$wp_customize->add_setting( 
 			'custom_css', array(
 				'default' => '',
-				'sanitize_callback' => 'esc_attr',
+				'sanitize_callback' => 'realistic_sanitize_css',
 			)
 		);
 		
 		$wp_customize->add_control(
-			new Customizer_Textarea_Control(
-				$wp_customize,
-				'custom_css',
-				array(
-					'label' => __( 'Custom CSS', 'realistic' ),
-					'section' => 'design_layout',
-					'settings' => 'custom_css',
-				)
+			'custom_css',
+			array(
+				'label' => __( 'Custom CSS', 'realistic' ),
+				'section' => 'design_layout',
+				'settings' => 'custom_css',
+				'type' => 'textarea',
 			)
+			
 		);
-		
 }
 add_action( 'customize_register', 'realistic_options_theme_customizer_register' );
 
@@ -613,7 +577,7 @@ add_action( 'customize_register', 'realistic_options_theme_customizer_register' 
 // Sanitize text
 function realistic_sanitize_text( $input ) {
 	return strip_tags( $input,'<a>' );
-}	
+}
 	
 // Sanitize checkbox
 function realistic_sanitize_checkbox( $input ) {
@@ -646,12 +610,12 @@ function realistic_sanitize_sidebar_settings( $input ) {
 // Sanitize color scheme
 function realistic_sanitize_color_scheme( $input ) {
     $valid = array(
-		'default' => get_template_directory_uri() .'/images/customizer/right.jpg',
-		'style1' => get_template_directory_uri() .'/images/customizer/right.jpg',
-		'style2' => get_template_directory_uri() .'/images/customizer/right.jpg',
-		'style3' => get_template_directory_uri() .'/images/customizer/right.jpg',
-		'style4' => get_template_directory_uri() .'/images/customizer/right.jpg',
-		'style5' => get_template_directory_uri() .'/images/customizer/right.jpg',
+		'indigo-pink' => get_template_directory_uri() .'/images/customizer/indigo-pink.png',
+		'blue-indigo' => get_template_directory_uri() .'/images/customizer/blue-indigo.png',
+		'bluegrey-teal' => get_template_directory_uri() .'/images/customizer/bluegrey-teal.png',
+		'red-deeporange' => get_template_directory_uri() .'/images/customizer/red-deeporange.png',
+		'purple-blue' => get_template_directory_uri() .'/images/customizer/purple-blue.png',
+		'green-lightgreen' => get_template_directory_uri() .'/images/customizer/green-lightgreen.png',
     );
  
     if ( array_key_exists( $input, $valid ) ) {
@@ -741,6 +705,16 @@ function realistic_sanitize_related_posts_query( $input ) {
     }
 }
 
+// Sanitize CSS (Taken from Jetpack CSS module)
+function realistic_sanitize_css( $input ) {
+	$css = preg_replace( '/\\\\([0-9a-fA-F]{4})/', '\\\\\\\\$1', $input );
+	$css = str_replace( '<=', '&lt;=', $css );
+	$css = wp_kses_split( $css, array(), array() );
+	$css = str_replace( '&gt;', '>', $css );
+	$css = strip_tags( $css );
+	return $css;
+}
+
 /*-----------------------------------------------------------------------------------*/
 /*  Customizer Styles & Scripts
 /*-----------------------------------------------------------------------------------*/
@@ -786,10 +760,7 @@ add_action( 'wp_head', 'realistic_add_style_settings' );
 //Loading Customizer Styles
 function realistic_customizer_inline_css() {
 ?>
-	<style type="text/css">
-	#customize-control-favicon_image .current {
-		width: 50px;
-	}	
+	<style type="text/css">	
 	.ui-state-active img {
 		border: 2px solid #444;
 	}

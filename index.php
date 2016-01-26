@@ -30,16 +30,11 @@ get_header(); ?>
 				?>
 			<?php endwhile; ?>
 			
-			<?php // if WP version 4.1.0 or above use the_posts_pagination() built in function.
-			if (4.1 <= floatval(get_bloginfo('version'))):?>                    
-				<?php the_posts_pagination( array(
-					'mid_size' => 2,
-					'prev_text' => __( '&#8249; Previous', 'themient' ),
-					'next_text' => __( 'Next &#8250;', 'themient' ),
-				) ); ?>
-			<?php else : ?>
-				<?php realistic_pagination(); ?>			
-			<?php endif; ?>
+			<?php the_posts_pagination( array(
+				'mid_size' => 2,
+				'prev_text' => __( '&#8249; Previous', 'realistic' ),
+				'next_text' => __( 'Next &#8250;', 'realistic' ),
+			) ); ?>
 			
 		<?php else : ?>
 

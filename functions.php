@@ -36,6 +36,16 @@
 			add_theme_support( 'post-formats', array(
 			'video',
 			) );
+			
+			// Add support for Jetpack's infinite scroll
+			add_theme_support( 'infinite-scroll', array(
+				'type'           => 'scroll',
+				'footer_widgets' => false,
+				'container'      => 'content',
+				'wrapper'        => true,
+				'render'         => false,
+				'posts_per_page' => false
+			) );
 		}
 	}
 	add_action( 'after_setup_theme', 'material_setup' );
@@ -87,20 +97,23 @@
 		// Loading MDL JS
 		wp_enqueue_script( 'materialjs', get_template_directory_uri() . '/js/material.min.js' );
 		
+		// Loading Custom Scripts
+		wp_enqueue_script( 'custom_scripts', get_template_directory_uri() . '/js/custom_scripts.js', array( 'jquery' ), '1.0.0', true );
+		
 		// Loading MDL CSS ( based on selected Color Scheme )
-		$theme_color = get_theme_mod( 'theme_color', 'default' );
-		if ( $theme_color == 'default' ) {
-		wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material-default.min.css');
-		} elseif ( $theme_color == 'style1' ) {
-		wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material-style1.min.css');			
-		} elseif ( $theme_color == 'style2' ) {
-		wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material-style2.min.css');			
-		} elseif ( $theme_color == 'style3' ) {
-		wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material-style3.min.css');			
-		} elseif ( $theme_color == 'style4' ) {
-		wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material-style4.min.css');			
-		} elseif ( $theme_color == 'style5' ) {
-		wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material-style5.min.css');			
+		$theme_color = get_theme_mod( 'theme_color', 'indigo-pink' );
+		if ( $theme_color == 'indigo-pink' ) {
+			wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material.indigo-pink.min.css');
+		} elseif ( $theme_color == 'blue-indigo' ) {
+			wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material.blue-indigo.min.css');
+		} elseif ( $theme_color == 'bluegrey-teal' ) {
+			wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material.bluegrey-teal.min.css');
+		} elseif ( $theme_color == 'red-deeporange' ) {
+			wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material.red-deeporange.min.css');
+		} elseif ( $theme_color == 'purple-blue' ) {
+			wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material.purple-blue.min.css');
+		} elseif ( $theme_color == 'green-lightgreen' ) {
+			wp_enqueue_style('materialcss', get_template_directory_uri().'/css/material.green-lightgreen.min.css');
 		}
 
 		// Loading Material icons
@@ -144,16 +157,13 @@
 	/*-----------------------------------------------------------------------------------*/
 	
 	// Add the Social Widget
-	include("functions/widget-socialicons.php");	
+	include("functions/widget-socialicons.php");
 
 	// Add Recent Posts Widget
 	include("functions/widget-recentposts.php");
 	
 	// Add Popular Posts Widget
 	include("functions/widget-popularposts.php");
-	
-	// Add Facebook Like box Widget
-	include("functions/widget-fblikebox.php");
 	
 	// Add the Login Widget
 	include("functions/widget-login.php");
@@ -176,18 +186,18 @@
 			
 			// Extracting main & accent colors & dynamically set the background-color/color style for some elements.
 			var mainColor = jQuery('header').css( "background-color" );
-			jQuery(".sticky .featured").css("background-color", mainColor );
+			jQuery(".featured").css("background-color", mainColor );
 			jQuery(".widget .thin-bar").css("border-color", mainColor );
 
 			jQuery(".main-navigation li ul li").mouseenter(function() {
 				jQuery(this).css("background-color", mainColor );
 			}).mouseleave(function() {
 				 jQuery(this).css("background-color", "transparent" );
-			});			
-
+			});
 
 			// Adding MDL buttons classes to nav-links and its links.
 			jQuery('.nav-links a').addClass('mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect');
+			jQuery('.page-numbers.dots').addClass('mdl-button mdl-js-button mdl-button--raised');
 			jQuery('.nav-links .current').addClass('mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect');
 		});
 		</script>
@@ -335,37 +345,6 @@
 			}
 		}
 	}
-	
-	/*-----------------------------------------------------------------------------------*/
-	/*  Pagination (for WP 4.0 and earlier versions)
-	/*-----------------------------------------------------------------------------------*/
-	if (!function_exists('realistic_pagination')) {
-		function realistic_pagination($pages = '', $range = 2) { 
-			$showitems = ($range * 1)+1;
-			global $paged; if(empty($paged)) $paged = 1;
-			if($pages == '') {
-				global $wp_query; $pages = $wp_query->max_num_pages; 
-				if(!$pages){ $pages = 1; } 
-			}
-			if(1 != $pages) { 
-				echo "<div class='pagination mdl-cell mdl-cell--12-col'><ul>";
-				if($paged > 2 && $paged > $range+1 && $showitems < $pages) 
-				echo "<li><a rel='nofollow' href='".get_pagenum_link(1)."' class='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'><i class='fa fa-chevron-left'></i> ".__('First','realistic')."</a></li>";
-				if($paged > 1 && $showitems < $pages) 
-				echo "<li><a rel='nofollow' href='".get_pagenum_link($paged - 1)."' class='inactive mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>&lsaquo; ".__('Previous','realistic')."</a></li>";
-				for ($i=1; $i <= $pages; $i++){ 
-					if (1 != $pages &&( !($i >= $paged+$range+1 || $i <= $paged-$range-1) || $pages <= $showitems )) { 
-						echo ($paged == $i)? "<li class='current'><span class='currenttext mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect'>".$i."</span></li>":"<li><a rel='nofollow' href='".get_pagenum_link($i)."' class='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>".$i."</a></li>";
-					} 
-				} 
-				if ($paged < $pages && $showitems < $pages) 
-				echo "<li><a rel='nofollow' href='".get_pagenum_link($paged + 1)."' class='inactive mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'>".__('Next','realistic')." &rsaquo;</a></li>";
-				if ($paged < $pages-1 &&  $paged+$range-1 < $pages && $showitems < $pages) 
-				echo "<li><a rel='nofollow' class='inactive mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect' href='".get_pagenum_link($pages)."'>".__('Last','realistic')." &raquo;</a></li>";
-				echo "</ul></div>"; 
-			}
-		}
-	}
 
 	/*-----------------------------------------------------------------------------------*/
 	/*  Excerpt
@@ -388,16 +367,6 @@
 	/*   Header Area
 	/*-----------------------------------------------------------------------------------*/
 	
-	// Display favicon if set.
-	if ( ! function_exists( 'realistic_favicon' ) ) {
-		function realistic_favicon() {
-			$favicon_image = get_theme_mod( 'favicon_image', get_template_directory_uri() .'/images/favicon.gif' );
-			if ( $favicon_image ) { ?>
-				<link rel="icon" type="image/png" href="<?php echo esc_url( $favicon_image ); ?>" /> 
-			<?php }  
-		}
-	}
-	
 	// Display logo.
 	if ( ! function_exists( 'realistic_logo' ) ) {
 		function realistic_logo() {            
@@ -418,17 +387,19 @@
 
 	//Display meta info if enabled.
 	if ( ! function_exists( 'realistic_archives_meta' ) ) {
-		function realistic_archives_meta() {
+		function realistic_archives_meta( $post_id ) {
 			$archives_meta = get_theme_mod( 'archives_post_meta', '1' );
 			if ( $archives_meta ) { ?>
 				<div class="entry-meta post-info">
 				<?php 
-					realistic_posted();
-					_e(' by ', 'realistic');
-					realistic_entry_author();
+					echo '<span class="theauthor"><i class="icon icon-user"></i>'. realistic_entry_author() .'</span>';
+					echo '<span class="posted">'. realistic_posted() .'</span>';
+					echo '<span class="comments"><i class="icon icon-comment"></i>'. realistic_entry_comments() .'</span>';
 					_e(' in ', 'realistic');
-					$category = get_the_category();
-					echo '<span class="category"><a class="mdl-button mdl-js-button" href="' . get_category_link( $category[0]->term_id ) . '" title="' . sprintf( __( "View all posts in %s", "realistic" ), $category[0]->name ) . '" ' . '>' . $category[0]->name.'</a></span>'; ?>
+					$category = get_the_category( $post_id );
+					if( !empty( $category[0] ) ) {
+						echo '<span class="category"><a class="mdl-button mdl-js-button" href="' . get_category_link( $category[0]->term_id ) . '" title="' . sprintf( __( "View all posts in %s", "realistic" ), $category[0]->name ) . '" ' . '>' . $category[0]->name.'</a></span>';
+					} ?>
 				</div><!-- .entry-meta -->
 			<?php }                                    
 		}
@@ -455,15 +426,11 @@
 			if ( $post_meta ) { ?>
 				<div class="entry-meta post-info">
 				<?php 
-					realistic_posted();
-					_e(' by ', 'realistic');
-					realistic_entry_author();
-					_e(' in ', 'realistic');
-					$category = get_the_category();
-					echo '<span class="category"><a class="mdl-button mdl-js-button" href="' . get_category_link( $category[0]->term_id ) . '" title="' . sprintf( __( "View all posts in %s", "realistic" ), $category[0]->name ) . '" ' . '>' . $category[0]->name.'</a></span><br>';					
-					echo '<div class="comment-counter icon material-icons mdl-badge" data-badge="'. realistic_entry_comments() .'">comment</div>';
-					_e('Tagged: ', 'realistic');
-					realistic_entry_tags(); ?>
+					echo '<span class="theauthor"><i class="icon icon-user"></i>'. realistic_entry_author() .'</span>';
+					echo '<span class="posted">'. realistic_posted() .'</span>';
+					echo '<span class="comments"><i class="icon icon-comment"></i>'. realistic_entry_comments() .' comments</span>';
+					echo realistic_entry_tags();
+				?>
 				</div><!-- .entry-meta -->
 			<?php }                                    
 		}
@@ -498,26 +465,22 @@
 							<div id="related_posts" class="related-posts mdl-grid mdl-cell mdl-cell--12-col">
 								<?php while( $my_query->have_posts() ) {
 								$my_query->the_post(); ?>
-								<div class="related-item mdl-card mdl-shadow--2dp mdl-grid mdl-cell--6-col-desktop mdl-cell--4-col-tablet mdl-cell--4-col-phone">
-										<div class="relatedthumb mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+								<div class="related-item mdl-card mdl-shadow--2dp mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+										<div class="relatedthumb">
 											<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
 												<img width="120" height="120" src="<?php echo realistic_get_thumbnail( 'small' ); ?>" class="attachment-featured wp-post-image" alt="<?php the_title_attribute(); ?>">
 												<?php $format = get_post_format( $post->ID );
 												realistic_post_format_icon( $format ); ?>
 											</a>
 										</div>
-										<div class="post-data-container mdl-cell--8-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+										<div class="post-data-container">
 											<h4>
 												<a href="<?php the_permalink() ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a>
 											</h4>
 											<div class="post-info">
 												<div class="meta-info">
-													<?php 
-													realistic_posted();
-													_e(' in ', 'realistic');
-													$category = get_the_category();
-													echo '<span class="category"><a href="' . get_category_link( $category[0]->term_id ) . '" title="' . sprintf( __( "View all posts in %s", "realistic" ), $category[0]->name ) . '" ' . '>' . $category[0]->name.'</a></span>';	
-													?>
+													<?php echo '<span class="posted">'. realistic_posted() .'</span>';
+													echo '<span class="comments"><i class="icon icon-comment"></i>'. realistic_entry_comments() .'</span>'; ?>
 												</div>
 											</div>
 										</div>
@@ -551,26 +514,22 @@
 							<div id="related_posts" class="related-posts mdl-grid mdl-cell mdl-cell--12-col">
 								<?php while( $my_query->have_posts() ) {
 								$my_query->the_post(); ?>
-								<div class="related-item mdl-card mdl-shadow--2dp mdl-grid mdl-cell--6-col-desktop mdl-cell--4-col-tablet mdl-cell--4-col-phone">
-										<div class="relatedthumb mdl-cell--4-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+								<div class="related-item mdl-card mdl-shadow--2dp mdl-cell mdl-cell--6-col-desktop mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+										<div class="relatedthumb">
 											<a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
 												<img width="120" height="120" src="<?php echo realistic_get_thumbnail( 'small' ); ?>" class="attachment-featured wp-post-image" alt="<?php the_title_attribute(); ?>">
 												<?php $format = get_post_format( $post->ID );
 												realistic_post_format_icon( $format ); ?>
 											</a>
 										</div>
-										<div class="post-data-container mdl-cell--8-col-desktop mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+										<div class="post-data-container">
 											<h4>
 												<a href="<?php the_permalink() ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a>
 											</h4>
 											<div class="post-info">
 												<div class="meta-info">
-													<?php 
-													realistic_posted();
-													_e(' in ', 'realistic');
-													$category = get_the_category();
-													echo '<span class="category"><a href="' . get_category_link( $category[0]->term_id ) . '" title="' . sprintf( __( "View all posts in %s", "realistic" ), $category[0]->name ) . '" ' . '>' . $category[0]->name.'</a></span>';	
-													?>
+													<?php echo '<span class="posted">'. realistic_posted() .'</span>';
+													echo '<span class="comments"><i class="icon icon-comment"></i>'. realistic_entry_comments() .'</span>'; ?>
 												</div>
 											</div>
 										</div>
@@ -599,27 +558,59 @@
 			<?php }
 		}                 
 	}
-		
+
 	//Display Author box if enabled.
 	if ( ! function_exists( 'realistic_author_box' ) ) {
 		function realistic_author_box() {
 			$author_box = get_theme_mod( 'author_box', '1' );
 			if ( $author_box ) { ?>
-			<h3 class="section-title margin-8"><?php _e('About The Author', 'realistic'); ?></h3>
-			<div class="author-box mdl-card mdl-shadow--2dp mdl-grid mdl-cell mdl-cell--12-col">
-				<div class="author-box-avatar mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
-				<?php if(function_exists('get_avatar')) { echo get_avatar( get_the_author_meta('email'), '120' );  } ?>
-				</div>
-				<div class="author-box-content mdl-cell--9-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
-					<div class="vcard clearfix">
-						<a href="<?php echo get_author_posts_url( get_the_author_meta( 'ID' ) ); ?>" rel="nofollow" class="fn"><i class="fa fa-user"></i><?php the_author_meta( 'nickname' ); ?></a>
+				<div class="author-box mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+					<div class="author-box-wrap mdl-grid">
+						<div class="author-box-avatar mdl-cell--3-col-desktop mdl-cell--3-col-tablet mdl-cell--2-col-phone">
+						<?php if(function_exists('get_avatar')) { echo get_avatar( get_the_author_meta('email'), '120' );  } ?>
+						</div>
+						<div class="author-box-content mdl-cell--9-col-desktop mdl-cell--5-col-tablet mdl-cell--2-col-phone">
+							<div class="author">
+								<?php _e('Written By:', 'realistic'); ?>
+								<div class="vcard clearfix">
+									<?php if( get_the_author_link() ) { ?>
+										<a href="<?php echo get_the_author_meta( 'user_url' ); ?>" rel="nofollow" class="fn"><strong><?php the_author_meta( 'nickname' ); ?></strong></a>
+									<?php } else { ?>
+										<strong><?php the_author_meta( 'nickname' ); ?></strong>
+									<?php }?>
+								</div>
+							</div>
+							<?php if( get_the_author_meta( 'description' ) ) { ?>
+								<p><?php the_author_meta('description') ?></p>
+							<?php }?>
+						</div>
 					</div>
-					<?php if( get_the_author_meta( 'description' ) ) { ?>
-						<p><?php the_author_meta('description') ?></p>
-					<?php }?>
-				</div>
-			</div>	
-			<?php }	
+					<div class="mdl-card__actions mdl-card--border">
+						<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="<?php echo get_author_posts_url( get_the_author_meta( 'ID' ) ); ?>">View Posts</a>
+						<?php if( get_the_author_meta( 'facebook' ) ) { ?>
+							<ul class="author-btns">
+								<?php if( get_the_author_meta( 'facebook' ) ) { ?>
+									<li>
+										<a class="facebook" title="Facebook" href="<?php the_author_meta('facebook') ?>" target="_blank"><i class="icon icon-facebook"></i></a>
+									</li>
+								<?php }?>
+								
+								<?php if( get_the_author_meta( 'twitter' ) ) { ?>
+									<li>
+										<a class="twitter" title="Twitter" href="<?php the_author_meta('twitter') ?>" target="_blank"><i class="icon icon-twitter-1"></i></a>
+									</li>
+								<?php }?>
+								
+								<?php if( get_the_author_meta( 'googleplus' ) ) { ?>
+									<li>
+										<a class="gplus" title="Google+" href="<?php the_author_meta('googleplus') ?>" target="_blank"><i class="icon icon-gplus-1"></i></a>
+									</li>
+								<?php }?>
+							</ul>
+						<?php }?>
+					</div>
+				</div>				
+			<?php }
 		}                 
 	}
 
@@ -678,19 +669,8 @@
 				</div>
 			<?php
 		}
-	}	
-	
-	/*-----------------------------------------------------------------------------------*/
-	/*   Remove query string from static files (for better performance)
-	/*-----------------------------------------------------------------------------------*/
-	function redwaves_remove_cssjs_ver( $src ) {
-		if( strpos( $src, '?ver=' ) )
-		$src = esc_url( remove_query_arg( 'ver', $src ) );
-		return $src;
 	}
-	add_filter( 'style_loader_src', 'redwaves_remove_cssjs_ver', 10, 2 );
-	add_filter( 'script_loader_src', 'redwaves_remove_cssjs_ver', 10, 2 );				
-		
+
 	/*-----------------------------------------------------------------------------------*/
 	/*  Load WP Customizer
 	/*-----------------------------------------------------------------------------------*/

@@ -85,11 +85,11 @@ if ( ! function_exists( 'realistic_posted' ) ) {
 				_x( '%s', 'post date', 'realistic' ),
 				$time_string 
 			);
-			echo '<span class="posted">' . $posted . '</span>';
+			return $posted;
 			
 		} else {
 			$output = realistic_time_ago();
-			echo '<span class="posted">' . $output . '</span>';
+			return $output;
 		}
 	}
 }
@@ -98,11 +98,11 @@ if ( ! function_exists( 'realistic_posted' ) ) {
 if ( ! function_exists( 'realistic_entry_author' ) ) :
 function realistic_entry_author() {
     if ( 'post' == get_post_type() ) {
-            $byline = sprintf(
+		$byline = sprintf(
 		_x( '%s', 'post author', 'realistic' ),
 		'<span class="author vcard"><span class="url fn"><a href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span></span>'
-	);
-            echo '<span class="theauthor">' . $byline . '</span>';
+		);
+		return $byline;
     }
 }
 endif;
@@ -129,7 +129,7 @@ function realistic_entry_tags() {
 		/* translators: used between list items, there is a space after the comma */
 		$tags_list = get_the_tag_list( '', __( ', ', 'realistic' ) );
 		if ( $tags_list ) {
-			printf( '<span class="thetags">' . __( '%1$s', 'realistic' ) . '</span>', $tags_list );
+			printf( '<span class="thetags"><i class="icon icon-tags"></i>'. __( '%1$s', 'realistic' ) .'</span>', $tags_list );
 		}
     }
 }

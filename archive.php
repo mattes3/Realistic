@@ -36,7 +36,11 @@ get_header(); ?>
 
 			<?php endwhile; ?>
 
-			<?php realistic_pagination(); ?>
+			<?php the_posts_pagination( array(
+				'mid_size' => 2,
+				'prev_text' => __( '&#8249; Previous', 'realistic' ),
+				'next_text' => __( 'Next &#8250;', 'realistic' ),
+			) ); ?>
 
 		<?php else : ?>
 
