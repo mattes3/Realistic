@@ -1,3 +1,4 @@
+/*
 (function($) {
 	//move-to-top arrow
 	$("body").prepend("<div id='move-to-top' class='animate mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--accent'><i class='material-icons'>expand_less</i></div>");
@@ -22,3 +23,4 @@
 		});
 	});
 })(jQuery);
+*/
